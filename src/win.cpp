@@ -5,6 +5,25 @@
 #include <shlobj.h>
 #include "DragDrop.hpp"
 
+// Helper function to convert TCHAR string to UTF-8
+std::string ConvertToUTF8(const TCHAR* input) {
+#ifdef UNICODE
+    // If UNICODE is defined, TCHAR is wchar_t and we need to convert from UTF-16 to UTF-8
+    int utf8Length = WideCharToMultiByte(CP_UTF8, 0, input, -1, nullptr, 0, nullptr, nullptr);
+    if (utf8Length <= 0) return "";
+    
+    std::string result(utf8Length, 0);
+    WideCharToMultiByte(CP_UTF8, 0, input, -1, &result[0], utf8Length, nullptr, nullptr);
+    if (!result.empty() && result.back() == 0) { // Remove null terminator if present
+        result.pop_back();
+    }
+    return result;
+#else
+    // If UNICODE is not defined, TCHAR is char and we assume it's already in the correct encoding
+    return std::string(input);
+#endif
+}
+
 class CDropTarget : public IDropTarget {
 private:
     LONG m_refCount;
@@ -14,7 +33,7 @@ private:
 public:
     CDropTarget(HWND hWnd) : m_refCount(1), m_hWnd(hWnd), m_allowDrop(false) {}
 
-    // IUnknown methods remain the same
+    // IUnknown methods
     STDMETHODIMP QueryInterface(REFIID riid, void** ppvObject) {
         if (riid == IID_IUnknown || riid == IID_IDropTarget) {
             *ppvObject = static_cast<IDropTarget*>(this);
@@ -37,29 +56,24 @@ public:
         return count;
     }
 
-    // Modified IDropTarget methods to work with the event system
+    // IDropTarget methods
     STDMETHODIMP DragEnter(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect) {
-        // Check if we can handle the data format
         FORMATETC fmte = { CF_HDROP, nullptr, DVASPECT_CONTENT, -1, TYMED_HGLOBAL };
         
-        // First verify we can accept the format
         if (FAILED(pDataObj->QueryGetData(&fmte))) {
             *pdwEffect = DROPEFFECT_NONE;
             return S_OK;
         }
 
-        // Get the data to check the first file
         STGMEDIUM stgm;
         if (SUCCEEDED(pDataObj->GetData(&fmte, &stgm))) {
             HDROP hDrop = static_cast<HDROP>(stgm.hGlobal);
             TCHAR filePath[MAX_PATH];
             
             if (DragQueryFile(hDrop, 0, filePath, MAX_PATH)) {
-                // Convert TCHAR path to UTF-8 string for the event system
-                int utf8Length = WideCharToMultiByte(CP_UTF8, 0, filePath, -1, nullptr, 0, nullptr, nullptr);
-                std::string utf8Path(utf8Length, 0);
-                WideCharToMultiByte(CP_UTF8, 0, filePath, -1, &utf8Path[0], utf8Length, nullptr, nullptr);
-
+                // Convert the path to UTF-8 using our helper function
+                std::string utf8Path = ConvertToUTF8(filePath);
+                
                 // Post the Drag event and check the result
                 auto result = DragDropEvent(utf8Path, DragDropType::Drag).post();
                 m_allowDrop = (result != ListenerResult::Propagate);
@@ -98,11 +112,9 @@ public:
             for (UINT i = 0; i < fileCount; i++) {
                 TCHAR filePath[MAX_PATH];
                 if (DragQueryFile(hDrop, i, filePath, MAX_PATH)) {
-                    // Convert TCHAR path to UTF-8 string
-                    int utf8Length = WideCharToMultiByte(CP_UTF8, 0, filePath, -1, nullptr, 0, nullptr, nullptr);
-                    std::string utf8Path(utf8Length, 0);
-                    WideCharToMultiByte(CP_UTF8, 0, filePath, -1, &utf8Path[0], utf8Length, nullptr, nullptr);
-
+                    // Convert the path to UTF-8 using our helper function
+                    std::string utf8Path = ConvertToUTF8(filePath);
+                    
                     // Post the Drop event
                     DragDropEvent(utf8Path, DragDropType::Drop).post();
                 }
@@ -117,9 +129,11 @@ public:
     }
 };
 
+
 __attribute__((constructor)) void initialize() {
 	OleInitialize(NULL);
-    static auto target = new CDropTarget();
-    RegisterDragDrop(WindowFromDC(wglGetCurrentDC()), (IDropTarget*)(target));
+    auto wnd = wglGetCurrentDC();
+    static auto target = new CDropTarget(wnd);
+    RegisterDragDrop(wnd, (IDropTarget*)(target));
 }
 #endif
