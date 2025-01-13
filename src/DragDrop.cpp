@@ -1,6 +1,8 @@
 #include "../include/DragDrop.hpp"
+#include <Geode/Geode.hpp>
 
 using namespace geode::prelude;
+using namespace geode::event::v2;
 
 DragDropEvent::DragDropEvent(std::filesystem::path const& path, DragDropType type) : m_path(path), m_type(type) {}
 std::filesystem::path const& DragDropEvent::getPath() const { return m_path; }
@@ -19,12 +21,14 @@ EventHandler<DragDropEvent> handleDragDrop(
     });
 
     handler.bind([=](DragDropEvent* ev) {
-        if (ev->getType() == DragDropType::Drag && drag)
-            drag(ev->getPath());
-        else if (ev->getType() == DragDropType::Drop)
-            drop(ev->getPath());
-        else if (ev->getType() == DragDropType::Cancel && cancel)
-            cancel();
+        Loader::get()->queueInMainThread([=]() {
+            if (ev->getType() == DragDropType::Drag && drag)
+                drag(ev->getPath());
+            else if (ev->getType() == DragDropType::Drop)
+                drop(ev->getPath());
+            else if (ev->getType() == DragDropType::Cancel && cancel)
+                cancel();
+        });
 
         return ListenerResult::Stop;
     });
