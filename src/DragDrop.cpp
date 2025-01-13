@@ -23,7 +23,7 @@ EventHandler<DragDropEvent> handleDragDrop(
             drag(ev->getPath());
         else if (ev->getType() == DragDropType::Drop)
             drop(ev->getPath());
-        else if (ev->getType() == DragDropType::Cancel)
+        else if (ev->getType() == DragDropType::Cancel && cancel)
             cancel();
 
         return ListenerResult::Stop;
