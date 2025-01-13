@@ -132,7 +132,7 @@ public:
 
 __attribute__((constructor)) void initialize() {
 	OleInitialize(NULL);
-    auto wnd = wglGetCurrentDC();
+    auto wnd = WindowFromDC(wglGetCurrentDC());
     static auto target = new CDropTarget(wnd);
     RegisterDragDrop(wnd, (IDropTarget*)(target));
 }
