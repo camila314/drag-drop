@@ -5,7 +5,7 @@
 #include <Cocoa/Cocoa.h>
 #undef CommentType
 
-@implementation NSWindow (sex)
+@implementation NSWindow (DragDrop)
 - (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender {
     NSPasteboard *pboard = [sender draggingPasteboard];
     NSArray *files = [pboard propertyListForType:NSFilenamesPboardType];
