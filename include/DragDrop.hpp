@@ -3,9 +3,9 @@
 
 
 #ifdef GEODE_IS_WINDOWS
-#define C_DLL __declspec(dllexport)
+#define DRAG_DLL __declspec(dllexport)
 #else
-#define C_DLL __attribute__((visibility("default")))
+#define DRAG_DLL __attribute__((visibility("default")))
 #endif
 
 
@@ -18,7 +18,7 @@ enum class DragDropType {
     Cancel
 };
 
-class C_DLL DragDropEvent : public Event {
+class DRAG_DLL DragDropEvent : public Event {
  protected:
     std::filesystem::path m_path;
     DragDropType m_type;
@@ -28,7 +28,7 @@ class C_DLL DragDropEvent : public Event {
     DragDropType getType() const;
 };
 
-EventHandler<DragDropEvent> C_DLL handleDragDrop(
+EventHandler<DragDropEvent> DRAG_DLL handleDragDrop(
     std::unordered_set<std::string> const& exts,
     std::function<void(std::filesystem::path const&)> drop,
     std::function<void(std::filesystem::path const&)> drag = {},
