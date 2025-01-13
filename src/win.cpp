@@ -1,8 +1,8 @@
+#include <Geode/Geode.hpp>
 #ifdef GEODE_IS_WINDOWS
 #include <windows.h>
 #include <ole2.h>
 #include <shlobj.h>
-
 #include "DragDrop.hpp"
 
 class CDropTarget : public IDropTarget {
