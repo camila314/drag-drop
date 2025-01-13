@@ -1,4 +1,8 @@
 #include "../include/DragDrop.hpp"
+#include <Geode/Geode.hpp>
+
+using namespace geode::prelude;
+using namespace geode::event::v2;
 
 #ifdef GEODE_IS_MACOS
 #define CommentType CommentTypeDummy

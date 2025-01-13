@@ -3,17 +3,17 @@
 #include <filesystem>
 
 #ifdef DRAG_TL
-   #ifdef GEODE_IS_MACOS
-      #define __declspec(x) __attribute__((visibility("default")))
-   #endif
+    #ifdef GEODE_IS_MACOS
+        #define __declspec(x) __attribute__((visibility("default")))
+    #endif
 
-   #define DRAG_DLL __declspec(dllexport)
+    #define DRAG_DLL __declspec(dllexport)
 #else
-   #ifdef GEODE_IS_MACOS
-      #define __declspec(x)
-   #endif
+    #ifdef GEODE_IS_MACOS
+        #define __declspec(x)
+    #endif
 
-   #define DRAG_DLL __declspec(dllimport)
+    #define DRAG_DLL __declspec(dllimport)
 #endif
 
 enum class DragDropType {

@@ -1,6 +1,10 @@
 // AI slop file because you can't catch me learning winapi
 
 #include "../include/DragDrop.hpp"
+#include <Geode/Geode.hpp>
+
+using namespace geode::prelude;
+using namespace geode::event::v2;
 
 #ifdef GEODE_IS_WINDOWS
 #include <windows.h>
