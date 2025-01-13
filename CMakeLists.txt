@@ -4,6 +4,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
+set(CMAKE_CXX_PRECOMPILE_HEADERS_CXX "" CACHE STRING "")
+set(CMAKE_CXX_PRECOMPILE_HEADERS_CPP "" CACHE STRING "")
+
 project(drag-drop VERSION 1.0.0)
 
 add_library(${PROJECT_NAME} SHARED 
@@ -12,6 +15,7 @@ add_library(${PROJECT_NAME} SHARED
     src/win.cpp
     src/DragDrop.cpp
 )
+set(CMAKE_PRE)
 
 if (NOT DEFINED ENV{GEODE_SDK})
     message(FATAL_ERROR "Unable to find Geode SDK! Please define GEODE_SDK environment variable to point to Geode")
