@@ -1,0 +1,12 @@
+{
+	"geode": "4.1.2",
+	"gd": {
+		"win": "2.2074",
+		"mac": "2.2074"
+	},
+	"id": "camila314.drag-drop",
+	"name": "Drag/Drop API",
+	"version": "v1.0.0",
+	"developer": "camila314",
+	"description": ""
+}
