@@ -95,6 +95,7 @@ public:
 
     STDMETHODIMP DragLeave() {
         m_allowDrop = false;
+        DragDropEvent("", DragDropType::Cancel).post();
         return S_OK;
     }
 

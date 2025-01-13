@@ -8,9 +8,10 @@ DragDropType DragDropEvent::getType() const { return m_type; }
 
 
 EventHandler<DragDropEvent> handleDragDrop(
-	std::unordered_set<std::string> const& exts,
-	std::function<void(std::filesystem::path const&)> drop,
-	std::function<void(std::filesystem::path const&)> drag
+    std::unordered_set<std::string> const& exts,
+    std::function<void(std::filesystem::path const&)> drop,
+    std::function<void(std::filesystem::path const&)> drag,
+    std::function<void()> cancel
 ) {
     auto handler = EventHandler<DragDropEvent>([=](auto event) {
         auto ext = event->getPath().extension().string();
@@ -18,12 +19,14 @@ EventHandler<DragDropEvent> handleDragDrop(
     });
 
     handler.bind([=](DragDropEvent* ev) {
-    	if (ev->getType() == DragDropType::Drag && drag)
-    		drag(ev->getPath());
-    	else if (ev->getType() == DragDropType::Drop)
-    		drop(ev->getPath());
+        if (ev->getType() == DragDropType::Drag && drag)
+            drag(ev->getPath());
+        else if (ev->getType() == DragDropType::Drop)
+            drop(ev->getPath());
+        else if (ev->getType() == DragDropType::Cancel)
+            cancel();
 
-    	return ListenerResult::Stop;
+        return ListenerResult::Stop;
     });
 
     return handler;

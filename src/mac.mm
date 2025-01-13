@@ -28,6 +28,11 @@
     DragDropEvent(filename.UTF8String, DragDropType::Drop).post();
     return YES;
 }
+
+- (void)draggingExited:(id<NSDraggingInfo>)sender {
+    DragDropEvent("", DragDropType::Cancel).post();
+}
+
 @end
 
 __attribute__((constructor)) void doThing2() {

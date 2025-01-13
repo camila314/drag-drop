@@ -7,9 +7,10 @@ auto txtHandler = handleDragDrop({ "txt" }, [](auto path) {
     // When file is dropped
     auto str = file::readString(path).unwrapOrDefault();
     FLAlertLayer::create("Dragged Text", str, "Ok")->show();
-}, [](auto) {
-    // When drag starts
+}, [](auto) { // optional arg
     log::info("Initiated drag event");
+}, []() { // optional arg
+    log::info("Left drag event");
 });
 ```
 

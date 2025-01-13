@@ -14,7 +14,8 @@ using namespace geode::event::v2;
 
 enum class DragDropType {
     Drag,
-    Drop
+    Drop,
+    Cancel
 };
 
 class C_DLL DragDropEvent : public Event {
@@ -30,5 +31,6 @@ class C_DLL DragDropEvent : public Event {
 EventHandler<DragDropEvent> C_DLL handleDragDrop(
     std::unordered_set<std::string> const& exts,
     std::function<void(std::filesystem::path const&)> drop,
-    std::function<void(std::filesystem::path const&)> drag = {}
+    std::function<void(std::filesystem::path const&)> drag = {},
+    std::function<void()> cancel = {}
 );
