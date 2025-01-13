@@ -7,7 +7,7 @@ std::filesystem::path const& DragDropEvent::getPath() const { return m_path; }
 DragDropType DragDropEvent::getType() const { return m_type; }
 
 
-EventHandler<DragDropEvent> GEODE_DLL handleDragDrop(
+EventHandler<DragDropEvent> handleDragDrop(
 	std::unordered_set<std::string> const& exts,
 	std::function<void(std::filesystem::path const&)> drop,
 	std::function<void(std::filesystem::path const&)> drag
