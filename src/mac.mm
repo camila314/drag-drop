@@ -1,6 +1,9 @@
+#include "../include/DragDrop.hpp"
+
 #ifdef GEODE_IS_MACOS
+#define CommentType CommentTypeDummy
 #include <Cocoa/Cocoa.h>
-#include "DragDrop.hpp"
+#undef CommentType
 
 @implementation NSWindow (sex)
 - (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender {

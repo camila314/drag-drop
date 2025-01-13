@@ -8,5 +8,15 @@
 	"name": "Drag/Drop API",
 	"version": "v1.0.0",
 	"developer": "camila314",
-	"description": ""
+	"description": "An API mod that implements drag/drop events for Mac and Windows.",
+	"repository": "https://github.com/camila314/drag-drop",
+	"tags": [
+		"utility",
+		"developer"
+	],
+	"api": {
+		"include": [
+			"include/DragDrop.hpp"
+		]
+	}
 }

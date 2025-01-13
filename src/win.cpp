@@ -1,9 +1,11 @@
-#include <Geode/Geode.hpp>
+// AI slop file because you can't catch me learning winapi
+
+#include "../include/DragDrop.hpp"
+
 #ifdef GEODE_IS_WINDOWS
 #include <windows.h>
 #include <ole2.h>
 #include <shlobj.h>
-#include "DragDrop.hpp"
 
 // Helper function to convert TCHAR string to UTF-8
 std::string ConvertToUTF8(const TCHAR* input) {

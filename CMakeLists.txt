@@ -8,7 +8,6 @@ set(CMAKE_DISABLE_PRECOMPILE_HEADERS 1)
 project(drag-drop VERSION 1.0.0)
 
 add_library(${PROJECT_NAME} SHARED 
-    src/main.cpp
     src/mac.mm
     src/win.cpp
     src/DragDrop.cpp
