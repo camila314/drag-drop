@@ -5,7 +5,7 @@
 #ifdef GEODE_IS_WINDOWS
 #define C_DLL __declspec(dllexport)
 #else
-#define C_DLL
+#define C_DLL __attribute__((visibility("default")))
 #endif
 
 
