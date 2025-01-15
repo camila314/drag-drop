@@ -16,7 +16,7 @@
     #define DRAG_DLL __declspec(dllimport)
 #endif
 
-enum class DragDropType {
+enum class DragDropType : char {
     Drag,
     Drop,
     Cancel
@@ -36,5 +36,5 @@ geode::event::v2::EventHandler<DragDropEvent> DRAG_DLL handleDragDrop(
     std::unordered_set<std::string> const& exts,
     std::function<void(std::filesystem::path const&)> drop,
     std::function<void(std::filesystem::path const&)> drag = {},
-    std::function<void()> cancel = {}
+    std::function<void(std::filesystem::path const&)> cancel = {}
 );

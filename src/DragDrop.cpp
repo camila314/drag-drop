@@ -13,7 +13,7 @@ EventHandler<DragDropEvent> handleDragDrop(
     std::unordered_set<std::string> const& exts,
     std::function<void(std::filesystem::path const&)> drop,
     std::function<void(std::filesystem::path const&)> drag,
-    std::function<void()> cancel
+    std::function<void(std::filesystem::path const&)> cancel
 ) {
     auto handler = EventHandler<DragDropEvent>([=](auto event) {
         auto ext = event->getPath().extension().string();
@@ -21,17 +21,38 @@ EventHandler<DragDropEvent> handleDragDrop(
     });
 
     handler.bind([=](DragDropEvent* ev) {
-        Loader::get()->queueInMainThread([=]() {
-            if (ev->getType() == DragDropType::Drag && drag)
-                drag(ev->getPath());
-            else if (ev->getType() == DragDropType::Drop)
-                drop(ev->getPath());
-            else if (ev->getType() == DragDropType::Cancel && cancel)
-                cancel();
-        });
+        decltype(drop) runFn;
+
+        switch (ev->getType()) {
+            case DragDropType::Drag:
+                runFn = drag;
+                break;
+            case DragDropType::Drop:
+                runFn = drop;
+                break;
+            case DragDropType::Cancel:
+                runFn = cancel;
+                break;
+        }
+
+        auto path = ev->getPath();
+        if (runFn)
+            Loader::get()->queueInMainThread(std::bind(runFn, path));
 
         return ListenerResult::Stop;
     });
 
     return handler;
 }
+
+
+auto txtHandler = handleDragDrop({ "txt" }, [](auto path) {
+    // When file is dropped
+    auto str = file::readString(path).unwrapOrDefault();
+    FLAlertLayer::create("Dragged Text", str, "Ok")->show();
+}, [](auto) { // optional arg
+    log::info("Initiated drag event");
+}, [](auto) { // optional arg
+    log::info("Left drag event");
+});
+

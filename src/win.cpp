@@ -35,6 +35,7 @@ private:
     LONG m_refCount;
     HWND m_hWnd;
     bool m_allowDrop;
+    std::string m_fileName;
 
 public:
     CDropTarget(HWND hWnd) : m_refCount(1), m_hWnd(hWnd), m_allowDrop(false) {}
@@ -78,10 +79,10 @@ public:
             
             if (DragQueryFile(hDrop, 0, filePath, MAX_PATH)) {
                 // Convert the path to UTF-8 using our helper function
-                std::string utf8Path = ConvertToUTF8(filePath);
+                m_fileName = ConvertToUTF8(filePath);
                 
                 // Post the Drag event and check the result
-                auto result = DragDropEvent(utf8Path, DragDropType::Drag).post();
+                auto result = DragDropEvent(m_fileName, DragDropType::Drag).post();
                 m_allowDrop = (result != ListenerResult::Propagate);
             }
             
@@ -99,7 +100,7 @@ public:
 
     STDMETHODIMP DragLeave() {
         m_allowDrop = false;
-        DragDropEvent("", DragDropType::Cancel).post();
+        DragDropEvent(m_fileName, DragDropType::Cancel).post();
         return S_OK;
     }
 

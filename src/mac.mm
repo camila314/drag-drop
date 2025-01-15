@@ -9,6 +9,8 @@ using namespace geode::event::v2;
 #include <Cocoa/Cocoa.h>
 #undef CommentType
 
+#define mainThread(x) dispatch_async(dispatch_get_main_queue(), ^{ x; })
+
 @implementation NSWindow (DragDrop)
 - (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender {
     NSPasteboard *pboard = [sender draggingPasteboard];
@@ -34,7 +36,11 @@ using namespace geode::event::v2;
 }
 
 - (void)draggingExited:(id<NSDraggingInfo>)sender {
-    DragDropEvent("", DragDropType::Cancel).post();
+    NSPasteboard *pboard = [sender draggingPasteboard];
+    NSArray *files = [pboard propertyListForType:NSFilenamesPboardType];
+    NSString *filename = files[0];
+
+    DragDropEvent(filename.UTF8String, DragDropType::Cancel).post();
 }
 
 @end
