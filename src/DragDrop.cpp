@@ -44,15 +44,3 @@ EventHandler<DragDropEvent> handleDragDrop(
 
     return handler;
 }
-
-
-auto txtHandler = handleDragDrop({ "txt" }, [](auto path) {
-    // When file is dropped
-    auto str = file::readString(path).unwrapOrDefault();
-    FLAlertLayer::create("Dragged Text", str, "Ok")->show();
-}, [](auto) { // optional arg
-    log::info("Initiated drag event");
-}, [](auto) { // optional arg
-    log::info("Left drag event");
-});
-
