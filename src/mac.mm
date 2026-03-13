@@ -2,7 +2,6 @@
 #include <Geode/Geode.hpp>
 
 using namespace geode::prelude;
-using namespace geode::event::v2;
 
 #ifdef GEODE_IS_MACOS
 #define CommentType CommentTypeDummy
@@ -20,7 +19,7 @@ using namespace geode::event::v2;
         return NSDragOperationNone;
 
     NSString *filename = files[0];
-    if (DragDropEvent(filename.UTF8String, DragDropType::Drag).post() == ListenerResult::Propagate) {
+    if (DragDropEvent(DragDropType::Drag).send(filename.UTF8String) == false) {
         return NSDragOperationNone;
     }
 
@@ -31,7 +30,7 @@ using namespace geode::event::v2;
     NSPasteboard *pboard = [sender draggingPasteboard];
     NSArray *files = [pboard propertyListForType:NSFilenamesPboardType];
     NSString *filename = files[0];
-    DragDropEvent(filename.UTF8String, DragDropType::Drop).post();
+    DragDropEvent(DragDropType::Drop).send(filename.UTF8String);
     return YES;
 }
 
@@ -40,14 +39,12 @@ using namespace geode::event::v2;
     NSArray *files = [pboard propertyListForType:NSFilenamesPboardType];
     NSString *filename = files[0];
 
-    DragDropEvent(filename.UTF8String, DragDropType::Cancel).post();
+    DragDropEvent(DragDropType::Cancel).send(filename.UTF8String);
 }
 
 @end
 
-__attribute__((constructor)) void doThing2() {
-    Loader::get()->queueInMainThread([]() {
-        [NSApp.windows[0] registerForDraggedTypes:@[NSFilenamesPboardType]];
-    });
+$execute {
+    [NSApp.windows[0] registerForDraggedTypes:@[NSFilenamesPboardType]];
 }
 #endif

@@ -4,7 +4,6 @@
 #include <Geode/Geode.hpp>
 
 using namespace geode::prelude;
-using namespace geode::event::v2;
 
 #ifdef GEODE_IS_WINDOWS
 #include <windows.h>
@@ -82,8 +81,8 @@ public:
                 m_fileName = ConvertToUTF8(filePath);
                 
                 // Post the Drag event and check the result
-                auto result = DragDropEvent(m_fileName, DragDropType::Drag).post();
-                m_allowDrop = (result != ListenerResult::Propagate);
+                auto result = DragDropEvent(DragDropType::Drag).send(m_fileName);
+                m_allowDrop = (result != false);
             }
             
             ReleaseStgMedium(&stgm);
@@ -100,7 +99,7 @@ public:
 
     STDMETHODIMP DragLeave() {
         m_allowDrop = false;
-        DragDropEvent(m_fileName, DragDropType::Cancel).post();
+        DragDropEvent(DragDropType::Cancel).send(m_fileName);
         return S_OK;
     }
 
@@ -124,7 +123,7 @@ public:
                     std::string utf8Path = ConvertToUTF8(filePath);
                     
                     // Post the Drop event
-                    DragDropEvent(utf8Path, DragDropType::Drop).post();
+                    DragDropEvent(DragDropType::Drop).send(utf8Path);
                 }
             }
             
@@ -138,7 +137,7 @@ public:
 };
 
 
-__attribute__((constructor)) void initialize() {
+$execute {
 	OleInitialize(NULL);
     auto wnd = WindowFromDC(wglGetCurrentDC());
     static auto target = new CDropTarget(wnd);

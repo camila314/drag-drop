@@ -28,6 +28,8 @@ jobs:
 
       - name: Setup CLI
         uses: geode-sdk/cli/.github/actions/setup@main
+        with:
+          version: nightly
 
       - name: Setup Login with Geode
         run: |
